@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ song.titre }} - Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .song-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        }
+        
+        .song-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .song-header {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .song-mood-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 2;
+            font-size: 1rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .song-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .song-artist {
+            color: #7f8c8d;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+        
+        .no-video-placeholder {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+        }
+        
+        .action-btn {
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn {
+            border: 2px solid #2c3e50;
+            color: #2c3e50;
+        }
+        
+        .back-btn:hover {
+            background: #2c3e50;
+            color: white;
+        }
+        
+        .edit-btn {
+            border: 2px solid #f39c12;
+            color: #f39c12;
+        }
+        
+        .edit-btn:hover {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .song-details {
+            padding: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .song-details {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="song-card">
+                <div class="song-header">
+                    {% if song.lienYoutube %}
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/{{ song.lienYoutube }}" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    {% else %}
+                        <div class="no-video-placeholder text-white d-flex align-items-center justify-content-center" 
+                             style="height: 400px;">
+                            <i class="fas fa-music fa-5x"></i>
+                        </div>
+                    {% endif %}
+                    <span class="song-mood-badge bg-primary">{{ song.humeurPrincipale }}</span>
+                </div>
+                
+                <div class="song-details">
+                    <h1 class="song-title">{{ song.titre }}</h1>
+                    <h3 class="song-artist">{{ song.artiste }}</h3>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ path('app_song_index') }}" class="action-btn back-btn">
+                            <i class="fas fa-arrow-left me-2"></i>Retour
+                        </a>
+                        
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div>
+                                <a href="{{ path('admin_song_edit', {'id': song.id}) }}" 
+                                   class="action-btn edit-btn">
+                                    <i class="fas fa-edit me-2"></i>Modifier
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,17 +1,184 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Moodify - Votre plateforme musicale intelligente{% endblock %}</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    
+    {% block stylesheets %}
+        <!-- Bootstrap 5 -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        <!-- Custom Base CSS -->
+        <style>
+            :root {
+                --primary-color: #6c5ce7;
+                --secondary-color: #a29bfe;
+                --dark-color: #2d3436;
+                --light-color: #f5f6fa;
+                --success-color: #00b894;
+                --danger-color: #d63031;
+            }
+            
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f8f9fa;
+                color: var(--dark-color);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .navbar-brand {
+                font-weight: 700;
+                color: var(--primary-color) !important;
+                font-size: 1.5rem;
+            }
+            
+            .navbar {
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .footer {
+                background-color: var(--dark-color);
+                color: white;
+                padding: 2rem 0;
+                margin-top: auto;
+            }
+            
+            .btn-primary {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+            
+            .btn-primary:hover {
+                background-color: #5649d1;
+                border-color: #5649d1;
+            }
+            
+            .text-primary {
+                color: var(--primary-color) !important;
+            }
+            
+            .bg-primary {
+                background-color: var(--primary-color) !important;
+            }
+        </style>
+    {% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
+    {% block javascripts %}
+        {{ importmap('app') }}
+        <!-- Bootstrap JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ path('app_register') }}">
+                <i class="fas fa-music me-2"></i>Moodify
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_song_index') }}">Bibliothèque</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_playlist_song_index') }}">Détection d'humeur</a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex">
+                    {% if app.user %}
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+                                <img src="https://ui-avatars.com/api/?name={{ app.user.username|url_encode }}&background=random" alt="Avatar" class="rounded-circle me-2" width="32" height="32">
+                                <span>{{ app.user.username }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li><a class="dropdown-item" href="{{ path('admin_dashboard') }}">Administration</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{{ path('app_profile') }}">Profil</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-primary me-2">Connexion</a>
+                        <a href="{{ path('app_register') }}" class="btn btn-primary">Inscription</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <!-- Flash Messages -->
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+    
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible fade show position-fixed bottom-0 end-0 m-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Moodify</h5>
+                    <p>Votre plateforme musicale intelligente qui s'adapte à votre humeur.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Liens utiles</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white">À propos</a></li>
+                        <li><a href="#" class="text-white">Contact</a></li>
+                        <li><a href="#" class="text-white">Confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Réseaux sociaux</h5>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/profile.php?id=100023936994276" class="text-white me-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white me-2"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/mohamed._.hassouna/" class="text-white me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-spotify"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p class="mb-0">&copy; {{ 'now'|date('Y') }} Moodify. Tous droits réservés.</p>
+            </div>
+        </div>
+    </footer>
+</body>
 </html>

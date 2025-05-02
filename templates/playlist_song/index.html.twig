@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Playlists - Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .playlist-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .playlist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .playlist-header {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            padding: 15px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Liste des Playlists</h1>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('admin_playlist_new') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Créer une playlist
+            </a>
+        {% endif %}
+    </div>
+
+    {% if playlists|length > 0 %}
+        <div class="row">
+            {% for playlist in playlists %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="playlist-card">
+                        <div class="playlist-header">
+                            <h5 class="mb-0">{{ playlist.nom }}</h5>
+                            <small class="text-white-50">Humeur: {{ playlist.humeur }}</small>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">Cette playlist sera bientôt remplie de chansons!</p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ path('app_playlist_show', {'id': playlist.id}) }}" class="btn btn-sm btn-primary w-100">
+                                Voir la playlist
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-music fa-4x mb-3"></i>
+            <h3>Aucune playlist disponible</h3>
+            <p class="text-muted">Commencez par créer une nouvelle playlist</p>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_playlist_new') }}" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus me-2"></i>Créer une playlist
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

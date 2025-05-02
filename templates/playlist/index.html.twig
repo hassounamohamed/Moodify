@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Playlists{% endblock %}
+
+{% block body %}
+    <h1>Liste des Playlists</h1>
+
+    <ul class="list-group">
+        {% for playlist in playlists %}
+            <li class="list-group-item">
+                <a href="{{ path('app_playlist_show', {'id': playlist.id}) }}">{{ playlist.name }}</a>
+            </li>
+        {% else %}
+            <li class="list-group-item">Aucune playlist disponible.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

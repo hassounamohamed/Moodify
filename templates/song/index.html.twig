@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Chansons - Moodify{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Liste des Chansons</h1>
+    
+    {% if songs|length > 0 %}
+        <div class="row">
+            {% for song in songs %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if song.lienYoutube %}
+                            <div class="ratio ratio-16x9">
+                                <iframe src="https://www.youtube.com/embed/{{ song.lienYoutube }}" 
+                                        allowfullscreen></iframe>
+                            </div>
+                        {% else %}
+                            <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" 
+                                 style="height: 180px;">
+                                <i class="fas fa-music fa-3x"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ song.titre }}</h5>
+                            <p class="card-text text-muted">{{ song.artiste }}</p>
+                            <p class="card-text">
+                                <span class="badge bg-primary">{{ song.humeurPrincipale }}</span>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ path('app_song_show', {'id': song.id}) }}" class="btn btn-sm btn-outline-primary">
+                                Voir détails
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Aucune chanson disponible pour le moment.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
