@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une chanson{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Ajouter une nouvelle chanson</h1>
+
+    <!-- Bouton flottant "+" -->
+    <div class="text-end mb-3">
+        <button id="toggleFormBtn" class="btn btn-primary rounded-circle" style="width: 50px; height: 50px;">
+            <span class="fs-4">+</span>
+        </button>
+    </div>
+
+    <!-- Formulaire caché -->
+    <div id="songForm" class="card shadow p-4" style="display: none;">
+        <form method="post" action="{{ path('song_add') }}">
+            <div class="mb-3">
+                <label for="titre" class="form-label">Titre</label>
+                <input type="text" class="form-control" id="titre" name="titre" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="artiste" class="form-label">Artiste</label>
+                <input type="text" class="form-control" id="artiste" name="artiste" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="lienYoutube" class="form-label">Lien YouTube</label>
+                <input type="url" class="form-control" id="lienYoutube" name="lienYoutube" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="humeurPrincipale" class="form-label">Humeur principale</label>
+                <input type="text" class="form-control" id="humeurPrincipale" name="humeurPrincipale" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+        </form>
+    </div>
+</div>
+
+<!-- Script pour afficher/masquer le formulaire -->
+<script>
+    document.getElementById('toggleFormBtn').addEventListener('click', function () {
+        const form = document.getElementById('songForm');
+        form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
+    });
+</script>
+{% endblock %}

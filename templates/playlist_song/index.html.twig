@@ -1,65 +1,204 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Playlists - Moodify{% endblock %}
+{% block title %}Associations Playlist-Chanson{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .playlist-card {
+        .association-card {
             border: none;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: white;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
         
-        .playlist-card:hover {
+        .association-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
         
-        .playlist-header {
+        .association-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6e8efb, #a777e3);
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .association-card:hover::before {
+            opacity: 1;
+        }
+        
+        .card-header-gradient {
             background: linear-gradient(135deg, #6e8efb, #a777e3);
             color: white;
-            padding: 15px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header-gradient::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            transition: all 0.3s ease;
+        }
+        
+        .association-card:hover .card-header-gradient::after {
+            right: 100%;
+        }
+        
+        .song-badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.5rem;
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px;
-            color: #6c757d;
+            padding: 3rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #6e8efb;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .song-item:last-child {
+            border-bottom: none;
+        }
+        
+        .song-item:hover {
+            background: rgba(110, 142, 251, 0.05);
+            transform: translateX(5px);
+        }
+        
+        .song-cover {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .song-info {
+            flex-grow: 1;
+        }
+        
+        .song-actions {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .song-item:hover .song-actions {
+            opacity: 1;
         }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Liste des Playlists</h1>
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="display-5 fw-bold">Associations Playlist-Chanson</h1>
         {% if is_granted('ROLE_ADMIN') %}
-            <a href="{{ path('admin_playlist_new') }}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>Créer une playlist
+            <a href="#" class="btn btn-primary btn-lg rounded-pill px-4">
+                <i class="fas fa-plus me-2"></i>Nouvelle association
             </a>
         {% endif %}
     </div>
 
-    {% if playlists|length > 0 %}
-        <div class="row">
-            {% for playlist in playlists %}
+    {% if playlistSongs|length > 0 %}
+        <div class="row g-4">
+            {% for playlistSong in playlistSongs %}
                 <div class="col-md-6 col-lg-4">
-                    <div class="playlist-card">
-                        <div class="playlist-header">
-                            <h5 class="mb-0">{{ playlist.nom }}</h5>
-                            <small class="text-white-50">Humeur: {{ playlist.humeur }}</small>
+                    <div class="association-card h-100">
+                        <div class="card-header-gradient">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1">{{ playlistSong.playlist.nom }}</h5>
+                                    <span class="song-badge">{{ playlistSong.playlist.humeur }}</span>
+                                </div>
+                                <i class="fas fa-music fa-2x opacity-25"></i>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <p class="card-text">Cette playlist sera bientôt remplie de chansons!</p>
+                            <h6 class="text-uppercase text-muted small mb-3">Chanson associée :</h6>
+                            
+                            <div class="song-item">
+                                <div class="song-cover">
+                                    <i class="fas fa-music text-primary"></i>
+                                </div>
+                                <div class="song-info">
+                                    <h6 class="mb-0">{{ playlistSong.song.titre }}</h6>
+                                    <small class="text-muted">{{ playlistSong.song.artiste }}</small>
+                                </div>
+                                <div class="song-actions">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-footer bg-transparent">
-                            <a href="{{ path('app_playlist_show', {'id': playlist.id}) }}" class="btn btn-sm btn-primary w-100">
-                                Voir la playlist
-                            </a>
+                        <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                            <small class="text-muted">
+                                <i class="far fa-calendar-alt me-1"></i>
+                                
+                            </small>
+                            <div>
+                                <a href="#" class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -67,15 +206,44 @@
         </div>
     {% else %}
         <div class="empty-state">
-            <i class="fas fa-music fa-4x mb-3"></i>
-            <h3>Aucune playlist disponible</h3>
-            <p class="text-muted">Commencez par créer une nouvelle playlist</p>
+            <div class="empty-icon">
+                <i class="fas fa-music"></i>
+            </div>
+            <h3 class="mb-3">Aucune association trouvée</h3>
+            <p class="text-muted mb-4">Commencez par créer des associations entre vos playlists et chansons</p>
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('admin_playlist_new') }}" class="btn btn-primary mt-3">
-                    <i class="fas fa-plus me-2"></i>Créer une playlist
+                <a href="#" class="btn btn-primary px-4 rounded-pill">
+                    <i class="fas fa-plus me-2"></i>Créer une association
                 </a>
             {% endif %}
         </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.association-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+            });
+            
+            // Ajout de la keyframe dynamiquement
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInUp {
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
 {% endblock %}

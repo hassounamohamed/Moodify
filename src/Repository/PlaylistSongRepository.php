@@ -16,28 +16,34 @@ class PlaylistSongRepository extends ServiceEntityRepository
         parent::__construct($registry, PlaylistSong::class);
     }
 
-//    /**
-//     * @return PlaylistSong[] Returns an array of PlaylistSong objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function save(PlaylistSong $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($entity);
 
-//    public function findOneBySomeField($value): ?PlaylistSong
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(PlaylistSong $entity, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($entity);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    // Ajoutez vos méthodes personnalisées ici
+    public function findByPlaylistWithSongs(int $playlistId): array
+    {
+        return $this->createQueryBuilder('ps')
+            ->join('ps.song', 's')
+            ->addSelect('s')
+            ->where('ps.playlist = :playlistId')
+            ->setParameter('playlistId', $playlistId)
+            ->orderBy('s.titre', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

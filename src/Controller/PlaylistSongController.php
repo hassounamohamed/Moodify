@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PlaylistSongController extends AbstractController
 {
-    #[Route('/playlist-songs', name: 'app_playlist_song_index')]
+    #[Route('/playlistsong', name: 'app_playlist_song_index')]
     public function index(PlaylistSongRepository $playlistSongRepository): Response
     {
         $playlistSongs = $playlistSongRepository->findAll();

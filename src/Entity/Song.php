@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SongRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SongRepository::class)]
@@ -25,6 +27,14 @@ class Song
     #[ORM\Column(length: 255)]
     private ?string $humeurPrincipale = null;
 
+    #[ORM\OneToMany(mappedBy: 'song', targetEntity: PlaylistSong::class)]
+    private Collection $playlistSongs;
+
+    public function __construct()
+    {
+        $this->playlistSongs = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -38,7 +48,6 @@ class Song
     public function setTitre(string $titre): static
     {
         $this->titre = $titre;
-
         return $this;
     }
 
@@ -50,7 +59,6 @@ class Song
     public function setArtiste(string $artiste): static
     {
         $this->artiste = $artiste;
-
         return $this;
     }
 
@@ -62,7 +70,6 @@ class Song
     public function setLienYoutube(string $lienYoutube): static
     {
         $this->lienYoutube = $lienYoutube;
-
         return $this;
     }
 
@@ -74,7 +81,33 @@ class Song
     public function setHumeurPrincipale(string $humeurPrincipale): static
     {
         $this->humeurPrincipale = $humeurPrincipale;
+        return $this;
+    }
 
+    /**
+     * @return Collection<int, PlaylistSong>
+     */
+    public function getPlaylistSongs(): Collection
+    {
+        return $this->playlistSongs;
+    }
+
+    public function addPlaylistSong(PlaylistSong $playlistSong): static
+    {
+        if (!$this->playlistSongs->contains($playlistSong)) {
+            $this->playlistSongs->add($playlistSong);
+            $playlistSong->setSong($this);
+        }
+        return $this;
+    }
+
+    public function removePlaylistSong(PlaylistSong $playlistSong): static
+    {
+        if ($this->playlistSongs->removeElement($playlistSong)) {
+            if ($playlistSong->getSong() === $this) {
+                $playlistSong->setSong(null);
+            }
+        }
         return $this;
     }
 }
