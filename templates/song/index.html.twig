@@ -1,64 +1,231 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des chansons{% endblock %}
+{% block title %}Liste des Chansons - Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .song-card {
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            background: white;
+            position: relative;
+        }
+        
+        .song-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .song-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6e8efb, #a777e3);
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .song-card:hover::before {
+            opacity: 1;
+        }
+        
+        .youtube-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .youtube-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .song-card:hover .youtube-iframe {
+            transform: scale(1.02);
+        }
+        
+        .no-video-placeholder {
+            height: 180px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            transition: all 0.3s ease;
+        }
+        
+        .song-card:hover .no-video-placeholder {
+            transform: scale(1.03);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        }
+        
+        .song-badge {
+            background: rgba(110, 142, 251, 0.1);
+            color: #6e8efb;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .song-card:hover .song-badge {
+            background: #6e8efb;
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            background: #f8f9fa;
+            border-radius: 12px;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #6e8efb;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        .action-btn {
+            transition: all 0.3s ease;
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .action-btn:hover::after {
+            transform: translateX(100%);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1 class="mb-4">🎵 Liste des chansons</h1>
-
-    <!-- Bouton ajouter -->
-    <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addSongModal">
-        <i class="fas fa-plus"></i> Ajouter une chanson
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="addSongModal" tabindex="-1" aria-labelledby="addSongModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <form method="post" action="{{ path('song_add') }}">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addSongModalLabel">Ajouter une chanson</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
-            </div>
-            <div class="modal-body">
-              <div class="mb-3">
-                <label for="title" class="form-label">Titre</label>
-                <input type="text" class="form-control" name="title" required>
-              </div>
-              <div class="mb-3">
-                <label for="artist" class="form-label">Artiste</label>
-                <input type="text" class="form-control" name="artist" required>
-              </div>
-              <div class="mb-3">
-                <label for="link" class="form-label">Lien (iframe YouTube)</label>
-                <input type="url" class="form-control" name="link" required>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-primary">Enregistrer</button>
-            </div>
-          </div>
-        </form>
-      </div>
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="display-5 fw-bold">Bibliothèque Musicale</h1>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('admin_song_new') }}" class="btn btn-primary btn-lg rounded-pill px-4 action-btn">
+                <i class="fas fa-plus me-2"></i>Nouvelle chanson
+            </a>
+        {% endif %}
     </div>
 
-    <!-- Liste des chansons -->
-    <div class="row">
-        {% for song in songs %}
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ song.titre }}</h5>
-                        <p class="card-text"><strong>Artiste :</strong> {{ song.artiste }}</p>
-                        <div class="ratio ratio-16x9">
-                            {{ song.lienYoutube|raw }}
+    {% if songs|length > 0 %}
+        <div class="row g-4">
+            {% for song in songs %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="song-card h-100">
+                        {% if song.lienYoutube %}
+                            <div class="youtube-container">
+                                <iframe class="youtube-iframe" 
+                                        src="https://www.youtube.com/embed/{{ song.lienYoutube }}?rel=0&enablejsapi=1&modestbranding=1" 
+                                        frameborder="0" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen
+                                        loading="lazy"></iframe>
+                            </div>
+                        {% else %}
+                            <div class="no-video-placeholder">
+                                <i class="fas fa-music"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title mb-2">{{ song.titre }}</h5>
+                            <p class="text-muted mb-3">{{ song.artiste }}</p>
+                            <span class="song-badge">{{ song.humeurPrincipale }}</span>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <a href="{{ path('song_index', {'id': song.id}) }}" 
+                               class="btn btn-outline-primary w-100 action-btn">
+                               <i class="fas fa-eye me-2"></i>Voir détails
+                            </a>
                         </div>
                     </div>
                 </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-music"></i>
             </div>
-        {% else %}
-            <p>Aucune chanson disponible.</p>
-        {% endfor %}
-    </div>
+            <h3 class="mb-3">Aucune chanson disponible</h3>
+            <p class="text-muted mb-4">Commencez par ajouter des chansons à votre bibliothèque</p>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_song_new') }}" class="btn btn-primary px-4 rounded-pill action-btn">
+                    <i class="fas fa-plus me-2"></i>Ajouter une chanson
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Animation au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.song-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+            });
+            
+            // Ajout de la keyframe dynamiquement
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInUp {
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
 {% endblock %}

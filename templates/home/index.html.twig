@@ -1,0 +1,441 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Couleurs et variables */
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary-color: #00cec9;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Section Hero améliorée */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 8rem 0;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('{{ asset('assets/images/music-notes.png') }}') no-repeat;
+            background-position: right bottom;
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Cartes améliorées */
+        .feature-card {
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: white;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        /* Section Humeurs */
+        .mood-card {
+            transition: all 0.3s ease;
+            perspective: 1000px;
+        }
+
+        .mood-card:hover .mood-emoji {
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .mood-emoji {
+            font-size: 3rem;
+            transition: all 0.3s ease;
+        }
+
+        /* Boutons améliorés */
+        .btn-primary-custom {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            background: #5649d1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-primary-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn-primary-custom:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Animations de section */
+        .section-animate {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Testimonials améliorés */
+        .testimonial-card {
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 4rem;
+            color: rgba(108, 92, 231, 0.1);
+            font-family: serif;
+            line-height: 1;
+        }
+
+        /* Stats */
+        .stat-number {
+            font-weight: 700;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .stat-number::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--secondary-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover .stat-number::after {
+            transform: scaleX(1);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center hero-content">
+            <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInDown">Votre humeur, votre musique</h1>
+            <p class="lead mb-5 animate__animated animate__fadeIn animate__delay-1s">Découvrez des playlists personnalisées qui s'adaptent à vos émotions en temps réel</p>
+            <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeIn animate__delay-2s">
+                {% if app.user %}
+                    <a href="{{ path('app_playlist_index') }}" class="btn btn-light btn-lg px-4 btn-primary-custom">
+                        <i class="fas fa-robot me-2"></i>Essayer le chatbot
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_register') }}" class="btn btn-light btn-lg px-4 btn-primary-custom">
+                        <i class="fas fa-user-plus me-2"></i>S'inscrire gratuitement
+                    </a>
+                    <a href="{{ path('app_login') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="container my-5 py-5 section-animate">
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded shadow-sm stat-card h-100">
+                    <h2 class="display-4 stat-number">{{ stats.total_songs|number_format(0, ',', ' ') }}</h2>
+                    <p class="mb-0">Chansons disponibles</p>
+                </div>
+            </div>
+            <div class="col-md-4 delay-1">
+                <div class="p-4 bg-white rounded shadow-sm stat-card h-100">
+                    <h2 class="display-4 stat-number">{{ stats.total_playlists|number_format(0, ',', ' ') }}</h2>
+                    <p class="mb-0">Playlists créées</p>
+                </div>
+            </div>
+            <div class="col-md-4 delay-2">
+                <div class="p-4 bg-white rounded shadow-sm stat-card h-100">
+                    <h2 class="display-4 stat-number">{{ stats.popular_moods|length }}</h2>
+                    <p class="mb-0">Humeurs populaires</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container my-5 py-5 section-animate">
+        <h2 class="text-center mb-5">Comment fonctionne Moodify ?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-comment-alt fa-2x"></i>
+                        </div>
+                        <h3>1. Exprimez-vous</h3>
+                        <p class="card-text">Dites-nous comment vous vous sentez grâce à notre chatbot intelligent.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 delay-1">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-brain fa-2x"></i>
+                        </div>
+                        <h3>2. Analyse IA</h3>
+                        <p class="card-text">Notre intelligence artificielle analyse votre humeur en temps réel.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 delay-2">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px;">
+                            <i class="fas fa-music fa-2x"></i>
+                        </div>
+                        <h3>3. Musique adaptée</h3>
+                        <p class="card-text">Recevez une playlist parfaitement adaptée à votre état d'esprit.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Moods Section -->
+    <section class="bg-light py-5 my-5 section-animate">
+        <div class="container">
+            <h2 class="text-center mb-5">Humeurs populaires</h2>
+            <div class="row g-4 justify-content-center">
+                {% for mood in stats.popular_moods %}
+                <div class="col-md-3 col-6 mood-card">
+                    <a href="{{ path('app_playlist_by_mood', {'humeur': mood.name|lower}) }}" class="text-decoration-none">
+                        <div class="card feature-card h-100">
+                            <div class="card-body text-center">
+                                <span class="display-4 d-block mb-3 mood-emoji">
+                                    {% if mood.name|lower == 'heureux' %}😊
+                                    {% elseif mood.name|lower == 'triste' %}😢
+                                    {% elseif mood.name|lower == 'énergique' %}⚡
+                                    {% elseif mood.name|lower == 'calme' %}🧘
+                                    {% elseif mood.name|lower == 'amoureux' %}❤️
+                                    {% else %}🎵{% endif %}
+                                </span>
+                                <h4>{{ mood.name }}</h4>
+                                <span class="badge bg-primary rounded-pill">{{ mood.count }} playlists</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="container my-5 py-5 section-animate">
+        <h2 class="text-center mb-5">Ce que nos utilisateurs disent</h2>
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+            <div class="col-md-4 {% if loop.index == 2 %}delay-1{% elseif loop.index == 3 %}delay-2{% endif %}">
+                <div class="card h-100 testimonial-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{{ testimonial.avatar ?? 'https://ui-avatars.com/api/?name=' ~ testimonial.author ~ '&background=random' }}" 
+                                 alt="{{ testimonial.author }}" 
+                                 class="rounded-circle me-3" 
+                                 width="50">
+                            <div>
+                                <h5 class="mb-0">{{ testimonial.author }}</h5>
+                                <div class="text-warning">
+                                    {% for i in 1..5 %}
+                                        <i class="fas fa-star{{ i > testimonial.rating ? '-empty' : '' }}"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <p class="card-text">"{{ testimonial.content }}"</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="bg-primary text-white py-5 section-animate">
+        <div class="container text-center">
+            <h2 class="mb-4">Prêt à vivre l'expérience Moodify ?</h2>
+            <p class="lead mb-4">Rejoignez notre communauté et découvrez la puissance de la musique adaptative.</p>
+            <a href="{{ path('app_register') }}" class="btn btn-light btn-lg px-5 btn-primary-custom">
+                <i class="fas fa-rocket me-2"></i>Commencer maintenant
+            </a>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des cartes
+            const featureCards = document.querySelectorAll('.feature-card');
+            
+            if (featureCards.length > 0) {
+                featureCards.forEach(card => {
+                    card.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-10px) scale(1.02)';
+                        this.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)';
+                    });
+                    
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform = '';
+                        this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                    });
+                });
+            }
+
+            // Animation au scroll
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('.section-animate');
+                elements.forEach(el => {
+                    const elementPosition = el.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.2;
+
+                    if (elementPosition < screenPosition) {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }
+                });
+            };
+
+            // Initial state
+            document.querySelectorAll('.section-animate').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            });
+
+            // Trigger on load and scroll
+            animateOnScroll();
+            window.addEventListener('scroll', animateOnScroll);
+
+            // Effet de vague sur le bouton
+            const buttons = document.querySelectorAll('.btn-primary-custom');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const x = e.pageX - btn.offsetLeft;
+                    const y = e.pageY - btn.offsetTop;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+{% endblock %}

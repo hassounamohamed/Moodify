@@ -16,28 +16,84 @@ class PlaylistRepository extends ServiceEntityRepository
         parent::__construct($registry, Playlist::class);
     }
 
-//    /**
-//     * @return Playlist[] Returns an array of Playlist objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * Trouve les humeurs les plus populaires avec leur nombre de playlists
+     * 
+     * @param int $limit Nombre maximum de résultats à retourner
+     * @return array Tableau associatif avec les humeurs et leur compte
+     */
+    public function findMostPopularMoods(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.humeur as name, COUNT(p.id) as count')
+            ->where('p.humeur IS NOT NULL')
+            ->groupBy('p.humeur')
+            ->orderBy('count', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Playlist
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * Trouve les playlists mises en avant (les plus populaires)
+     * 
+     * @return Playlist[] Tableau des playlists mises en avant
+     */
+    public function findFeaturedPlaylists(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.playlistSongs', 'ps')
+            ->addSelect('COUNT(ps.id) as songCount')
+            ->groupBy('p.id')
+            ->orderBy('songCount', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Trouve les playlists par humeur
+     * 
+     * @param string $humeur Humeur recherchée
+     * @return Playlist[] Tableau des playlists correspondantes
+     */
+    public function findByMood(string $humeur): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.humeur = :humeur')
+            ->setParameter('humeur', $humeur)
+            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Sauvegarde une playlist en base de données
+     * 
+     * @param Playlist $playlist
+     * @param bool $flush Si true, exécute immédiatement la requête
+     */
+    public function save(Playlist $playlist, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($playlist);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    /**
+     * Supprime une playlist de la base de données
+     * 
+     * @param Playlist $playlist
+     * @param bool $flush Si true, exécute immédiatement la requête
+     */
+    public function remove(Playlist $playlist, bool $flush = false): void
+    {
+        $this->getEntityManager()->remove($playlist);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
 }
