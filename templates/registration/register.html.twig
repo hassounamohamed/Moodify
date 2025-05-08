@@ -1,0 +1,175 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription | Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary-color: #00cec9;
+        }
+        
+        .registration-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .registration-card {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: white;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .registration-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-icon {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .form-control {
+            height: 50px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding-left: 45px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+        
+        .input-group-text {
+            position: absolute;
+            z-index: 4;
+            height: 50px;
+            background: transparent;
+            border: none;
+        }
+        
+        .btn-register {
+            background: var(--primary-color);
+            border: none;
+            height: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+        
+        .btn-register:hover {
+            background: #5649d1;
+            transform: translateY(-2px);
+        }
+        
+        .login-link {
+            color: var(--primary-color);
+            transition: all 0.3s;
+        }
+        
+        .login-link:hover {
+            color: #5649d1;
+            text-decoration: underline;
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="registration-wrapper">
+    <div class="container">
+        <div class="registration-card animate-fade-in">
+            <h1 class="h3 mb-4 text-center font-weight-bold">Créer un compte</h1>
+            
+            {{ form_start(registrationForm) }}
+                <div class="mb-4 position-relative">
+                    <div class="input-group-text">
+                        <i class="fas fa-envelope form-icon"></i>
+                    </div>
+                    {{ form_widget(registrationForm.email, {'attr': {'placeholder': ' '}}) }}
+                    {{ form_label(registrationForm.email) }}
+                    {{ form_errors(registrationForm.email) }}
+                </div>
+                
+                <div class="mb-4 position-relative">
+                    <div class="input-group-text">
+                        <i class="fas fa-lock form-icon"></i>
+                    </div>
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'placeholder': ' '}}) }}
+                    {{ form_label(registrationForm.plainPassword) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block btn-register mb-3">
+                    <i class="fas fa-user-plus mr-2"></i> S'inscrire
+                </button>
+                
+                <div class="text-center mt-3">
+                    <p>Déjà un compte ? <a href="{{ path('app_login') }}" class="login-link">Connectez-vous</a></p>
+                </div>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation des inputs au focus
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentNode.querySelector('.form-icon').style.color = '#6c5ce7';
+                });
+                input.addEventListener('blur', function() {
+                    this.parentNode.querySelector('.form-icon').style.color = '#6c5ce7';
+                });
+            });
+            
+            // Effet de vague sur le bouton
+            const btn = document.querySelector('.btn-register');
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    const x = e.pageX - btn.offsetLeft;
+                    const y = e.pageY - btn.offsetTop;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+{% endblock %}
