@@ -13,6 +13,16 @@ class HomeController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(SongRepository $songRepository, PlaylistRepository $playlistRepository): Response
     {
+        // If you want to force login for all home page access, uncomment:
+        // $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        // If you want to show different content based on authentication:
+        if (!$this->getUser()) {
+            // Option 1: Redirect to login
+            // return $this->redirectToRoute('app_login');
+            
+            // Option 2: Show public content (current implementation)
+        }
         // Récupérer les statistiques pour la page d'accueil
         $stats = [
             'total_songs' => $songRepository->count([]),

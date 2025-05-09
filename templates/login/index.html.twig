@@ -1,20 +1,142 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello LoginController!{% endblock %}
+{% block title %}Connexion | Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary-color: #00cec9;
+        }
+        
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .login-card {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        
+        .form-icon {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        
+        .form-control {
+            height: 50px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding-left: 45px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+        
+        .input-group-text {
+            position: absolute;
+            z-index: 4;
+            height: 50px;
+            background: transparent;
+            border: none;
+        }
+        
+        .btn-login {
+            background: var(--primary-color);
+            border: none;
+            height: 50px;
+            font-weight: 600;
+        }
+        
+        .register-link {
+            color: var(--primary-color);
+        }
+        
+        .alert-danger {
+            color: #dc3545;
+            background-color: #f8d7da;
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border-radius: 0.25rem;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/xampp/htdocs/moodify/src/Controller/LoginController.php</code></li>
-        <li>Your template at <code>C:/xampp/htdocs/moodify/templates/login/index.html.twig</code></li>
-    </ul>
+<div class="login-wrapper">
+    <div class="container">
+        <div class="login-card">
+            <h1 class="h3 mb-4 text-center font-weight-bold">Connexion</h1>
+            
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            
+            <form method="post" action="{{ path('app_login') }}">
+            
+                <div class="mb-4 position-relative">
+                    <div class="input-group-text">
+                        <i class="fas fa-envelope form-icon"></i>
+                    </div>
+                    <input 
+                        type="email" 
+                        value="{{ last_username }}" 
+                        name="_username" 
+                        id="inputEmail" 
+                        class="form-control" 
+                        placeholder="votre@email.com"
+                        autocomplete="email" 
+                        required 
+                        autofocus
+                    >
+                </div>
+                
+                <div class="mb-4 position-relative">
+                    <div class="input-group-text">
+                        <i class="fas fa-lock form-icon"></i>
+                    </div>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="inputPassword" 
+                        class="form-control" 
+                        placeholder="••••••"
+                        autocomplete="current-password" 
+                        required
+                    >
+                </div>
+                
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                
+                <div class="mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Se souvenir de moi</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block btn-login mb-3">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Se connecter
+                </button>
+                
+                <div class="text-center mt-3">
+                    <p>Pas encore de compte ? <a href="{{ path('app_register') }}" class="register-link">S'inscrire</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
