@@ -117,9 +117,9 @@
                                 {% if is_granted('ROLE_ADMIN') %}
                                     <li><a class="dropdown-item" href="{{ path('admin_dashboard') }}">Administration</a></li>
                                 {% endif %}
-                                <li><a class="dropdown-item" href="#">Profil</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_profile') }}">Profil</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Déconnexion</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
                             </ul>
                         </div>
                     {% else %}

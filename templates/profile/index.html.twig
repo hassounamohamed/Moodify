@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil - Moodify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .profile-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card profile-card">
+                <div class="card-header profile-header py-4">
+                    <div class="text-center">
+                        <img src="https://ui-avatars.com/api/?name={{ user.email|url_encode }}&background=random&color=fff" 
+                             alt="Avatar" 
+                             class="rounded-circle mb-3" 
+                             width="100">
+                        <h2>Mon Profil</h2>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Informations personnelles</h4>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Email :</strong> {{ user.email }}
+                                </li>
+                                
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Actions</h4>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('app_profile_edit') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-edit me-2"></i>Modifier le profil
+                                </a>
+                                <a href="{{ path('app_change_password') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-lock me-2"></i>Changer le mot de passe
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
