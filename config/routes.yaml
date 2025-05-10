@@ -3,3 +3,24 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+app_playlist_song_index:
+    path: /playlist-song
+    controller: App\Controller\PlaylistSongController::index
+
+app_playlist_song_new:
+    path: /playlist-song/new
+    controller: App\Controller\PlaylistSongController::new
+
+app_playlist_song_show:
+    path: /playlist-song/{id}
+    controller: App\Controller\PlaylistSongController::show
+
+app_playlist_song_edit:
+    path: /playlist-song/{id}/edit
+    controller: App\Controller\PlaylistSongController::edit
+
+app_playlist_song_delete:
+    path: /playlist-song/{id}
+    controller: App\Controller\PlaylistSongController::delete
+    methods: POST

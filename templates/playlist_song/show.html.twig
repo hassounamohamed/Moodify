@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Association Playlist-Chanson{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Détails de l'Association</h2>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Playlist</th>
+                        <td>{{ playlist_song.playlist.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Humeur</th>
+                        <td>{{ playlist_song.playlist.humeur }}</td>
+                    </tr>
+                    <tr>
+                        <th>Chanson</th>
+                        <td>{{ playlist_song.song.titre }} - {{ playlist_song.song.artiste }}</td>
+                    </tr>
+                   
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-end gap-2">
+            <a href="{{ path('app_playlist_song_edit', {'id': playlist_song.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit me-2"></i>Modifier
+            </a>
+            <a href="{{ path('app_playlist_song_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

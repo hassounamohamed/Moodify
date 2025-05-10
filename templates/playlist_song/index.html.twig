@@ -148,7 +148,7 @@
     <div class="d-flex justify-content-between align-items-center mb-5">
         <h1 class="display-5 fw-bold">Associations Playlist-Chanson</h1>
         {% if is_granted('ROLE_ADMIN') %}
-            <a href="#" class="btn btn-primary btn-lg rounded-pill px-4">
+            <a href="{{ path('app_playlist_song_new') }}" class="btn btn-primary btn-lg rounded-pill px-4">
                 <i class="fas fa-plus me-2"></i>Nouvelle association
             </a>
         {% endif %}
@@ -180,7 +180,7 @@
                                     <small class="text-muted">{{ playlistSong.song.artiste }}</small>
                                 </div>
                                 <div class="song-actions">
-                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                    <a href="{{ path('app_playlist_song_show', {'id': playlistSong.id}) }}" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                 </div>
@@ -189,15 +189,17 @@
                         <div class="card-footer bg-white border-0 d-flex justify-content-between">
                             <small class="text-muted">
                                 <i class="far fa-calendar-alt me-1"></i>
-                                
                             </small>
                             <div>
-                                <a href="#" class="btn btn-sm btn-outline-primary me-1">
+                                <a href="{{ path('app_playlist_song_edit', {'id': playlistSong.id}) }}" class="btn btn-sm btn-outline-primary me-1">
                                     <i class="fas fa-pencil-alt"></i>
                                 </a>
-                                <a href="#" class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <form method="post" action="{{ path('app_playlist_song_delete', {'id': playlistSong.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette association ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ playlistSong.id) }}">
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -212,7 +214,7 @@
             <h3 class="mb-3">Aucune association trouvée</h3>
             <p class="text-muted mb-4">Commencez par créer des associations entre vos playlists et chansons</p>
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="#" class="btn btn-primary px-4 rounded-pill">
+                <a href="{{ path('app_playlist_song_new') }}" class="btn btn-primary px-4 rounded-pill">
                     <i class="fas fa-plus me-2"></i>Créer une association
                 </a>
             {% endif %}
