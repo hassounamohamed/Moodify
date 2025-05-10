@@ -43,5 +43,5 @@ Moodify is a music recommendation platform that creates personalized playlists b
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/moodify.git
+git clone https://github.com/hassounamohamed/moodify.git
 cd moodify
