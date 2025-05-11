@@ -4,7 +4,7 @@
 
 Moodify is a music recommendation platform that creates personalized playlists based on your current mood. Using AI-powered mood analysis through natural language processing, Moodify suggests the perfect music to match your emotions.
 
-![Moodify Screenshot](public/assets/images/screenshot.png) <!-- Add your screenshot here -->
+![Moodify Screenshot](C:\Users\GIGABYTE\Pictures\Screenshots\moodify.png) <!-- Add your screenshot here -->
 
 ## Features ✨
 
