@@ -6,15 +6,7 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Ajouter une nouvelle chanson</h1>
 
-    <!-- Bouton flottant "+" -->
-    <div class="text-end mb-3">
-        <button id="toggleFormBtn" class="btn btn-primary rounded-circle" style="width: 50px; height: 50px;">
-            <span class="fs-4">+</span>
-        </button>
-    </div>
-
-    <!-- Formulaire caché -->
-    <div id="songForm" class="card shadow p-4" style="display: none;">
+    <div class="card shadow p-4">
         {{ form_start(form) }}
             <div class="mb-3">
                 {{ form_label(form.titre) }}
@@ -29,6 +21,7 @@
             <div class="mb-3">
                 {{ form_label(form.lienYoutube) }}
                 {{ form_widget(form.lienYoutube, {'attr': {'class': 'form-control'}}) }}
+                <small class="text-muted">Ex: https://www.youtube.com/watch?v=...</small>
             </div>
 
             <div class="mb-3">
@@ -36,15 +29,15 @@
                 {{ form_widget(form.humeurPrincipale, {'attr': {'class': 'form-control'}}) }}
             </div>
 
-            <button type="submit" class="btn btn-success">Enregistrer</button>
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('song_index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i> Annuler
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i> Enregistrer
+                </button>
+            </div>
         {{ form_end(form) }}
     </div>
 </div>
-
-<script>
-    document.getElementById('toggleFormBtn').addEventListener('click', function () {
-        const form = document.getElementById('songForm');
-        form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
-    });
-</script>
 {% endblock %}

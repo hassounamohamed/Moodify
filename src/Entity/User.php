@@ -103,7 +103,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
-   
+   public function addRole(string $role): self
+{
+    if (!in_array($role, $this->roles, true)) {
+        $this->roles[] = $role;
+    }
+    return $this;
+}
+
+public function removeRole(string $role): self
+{
+    if (($key = array_search($role, $this->roles, true)) !== false) {
+        unset($this->roles[$key]);
+        $this->roles = array_values($this->roles);
+    }
+    return $this;
+}
+
+public function hasRole(string $role): bool
+{
+    return in_array($role, $this->getRoles(), true);
+}
+
+public function isAdmin(): bool
+{
+    return $this->hasRole('ROLE_ADMIN');
+}
 
 
 }

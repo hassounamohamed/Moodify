@@ -16,11 +16,9 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                
                 password_parameter: password
                 default_target_path: app_home
                 enable_csrf: true
-                
                 always_use_default_target_path: true
             logout:
                 path: app_logout
@@ -29,5 +27,11 @@ security:
     access_control:
         - { path: ^/login$, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/, roles: ROLE_USER }
+        - { path: ^/songs/new, roles: ROLE_ADMIN } 
+    
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN

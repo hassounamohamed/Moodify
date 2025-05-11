@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier utilisateur{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h2 class="h5 mb-0">Modifier l'utilisateur</h2>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.email) }}
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form_label(form.roles) }}
+                            <div class="form-check">
+                                {{ form_widget(form.roles) }}
+                            </div>
+                            {{ form_errors(form.roles) }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form_label(form.password) }}
+                            {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+                            <small class="text-muted">Laisser vide pour ne pas changer le mot de passe</small>
+                            {{ form_errors(form.password) }}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('admin_user_index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i> Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i> Enregistrer
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

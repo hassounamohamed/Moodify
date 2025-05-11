@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord Admin{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="mb-4">Tableau de bord Administrateur</h1>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Gestion des utilisateurs</h5>
+                    <a href="{{ path('admin_user_index') }}" class="btn btn-primary stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-music fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Gestion des chansons</h5>
+                    <a href="{{ path('song_index') }}" class="btn btn-primary stretched-link">
+                        Accéder <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Statistiques</h5>
+                    <a href="#" class="btn btn-outline-primary stretched-link">
+                        Bientôt disponible
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -21,16 +21,29 @@ final class UserController extends AbstractController
         ]);
     
     }
-    #[Route('/user/create', name: 'app_user_create')]
+// src/Controller/UserController.php
 
-public function create(Request $request, EntityManagerInterface $entityManager): Response
+// ...
+
+#[Route('/user/create', name: 'app_user_create')]
+    public function create(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
 {
+    $this->denyAccessUnlessGranted('ROLE_ADMIN');
+    
     $user = new User();
     $form = $this->createForm(UserType::class, $user);
 
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
+        // Hash the password
+        $user->setPassword(
+            $passwordHasher->hashPassword(
+                $user,
+                $form->get('plainPassword')->getData()
+            )
+        );
+        
         $entityManager->persist($user);
         $entityManager->flush();
 
