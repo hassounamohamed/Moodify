@@ -21,7 +21,7 @@ class Playlist
     #[ORM\Column(length: 255)]
     private ?string $humeur = null;
 
-    #[ORM\OneToMany(mappedBy: 'playlist', targetEntity: PlaylistSong::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'playlist', targetEntity: PlaylistSong::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $playlistSongs;
 
     #[ORM\ManyToOne(inversedBy: 'playlists')]
@@ -60,9 +60,6 @@ class Playlist
         return $this;
     }
 
-    /**
-     * @return Collection<int, PlaylistSong>
-     */
     public function getPlaylistSongs(): Collection
     {
         return $this->playlistSongs;
@@ -96,5 +93,48 @@ class Playlist
     {
         $this->user = $user;
         return $this;
+    }
+
+    public function getSongs(): Collection
+    {
+        $songs = new ArrayCollection();
+        foreach ($this->playlistSongs as $playlistSong) {
+            if ($song = $playlistSong->getSong()) {
+                $songs->add($song);
+            }
+        }
+        return $songs;
+    }
+
+    public function addSong(Song $song): static
+    {
+        if (!$this->containsSong($song)) {
+            $playlistSong = new PlaylistSong();
+            $playlistSong->setSong($song);
+            $playlistSong->setPlaylist($this);
+            $this->addPlaylistSong($playlistSong);
+        }
+        return $this;
+    }
+
+    public function removeSong(Song $song): static
+    {
+        foreach ($this->playlistSongs as $playlistSong) {
+            if ($playlistSong->getSong() === $song) {
+                $this->removePlaylistSong($playlistSong);
+                break;
+            }
+        }
+        return $this;
+    }
+
+    public function containsSong(Song $song): bool
+    {
+        foreach ($this->playlistSongs as $playlistSong) {
+            if ($playlistSong->getSong() === $song) {
+                return true;
+            }
+        }
+        return false;
     }
 }

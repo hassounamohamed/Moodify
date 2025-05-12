@@ -20,7 +20,7 @@ class PlaylistSong
     #[ORM\ManyToOne(inversedBy: 'playlistSongs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Song $song = null;
-
+   
     public function getId(): ?int
     {
         return $this->id;
@@ -31,7 +31,7 @@ class PlaylistSong
         return $this->playlist;
     }
 
-    public function setPlaylist(?Playlist $playlist): self
+    public function setPlaylist(?Playlist $playlist): static
     {
         $this->playlist = $playlist;
         return $this;
@@ -42,9 +42,18 @@ class PlaylistSong
         return $this->song;
     }
 
-    public function setSong(?Song $song): self
+    public function setSong(?Song $song): static
     {
         $this->song = $song;
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('PlaylistSong #%d (Playlist: %s, Song: %s)', 
+            $this->id ?? 0, 
+            $this->playlist?->getNom() ?? 'null', 
+            $this->song?->getTitre() ?? 'null'
+        );
     }
 }

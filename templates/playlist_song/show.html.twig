@@ -23,7 +23,6 @@
                         <th>Chanson</th>
                         <td>{{ playlist_song.song.titre }} - {{ playlist_song.song.artiste }}</td>
                     </tr>
-                   
                 </tbody>
             </table>
         </div>
@@ -31,6 +30,15 @@
             <a href="{{ path('app_playlist_song_edit', {'id': playlist_song.id}) }}" class="btn btn-primary">
                 <i class="fas fa-edit me-2"></i>Modifier
             </a>
+            
+            {# Add the delete form #}
+            <form method="post" action="{{ path('app_playlist_song_delete', {'id': playlist_song.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette association?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ playlist_song.id) }}">
+                <button class="btn btn-danger">
+                    <i class="fas fa-trash me-2"></i>Supprimer
+                </button>
+            </form>
+            
             <a href="{{ path('app_playlist_song_index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Retour
             </a>
