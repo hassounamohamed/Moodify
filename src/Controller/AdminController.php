@@ -82,21 +82,15 @@ public function showSong(Song $song): Response
     }
 
     #[Route('/songs/{id}/delete', name: 'admin_song_delete', methods: ['POST'])]
-public function deleteSong(Song $song, Request $request, EntityManagerInterface $em): Response
-{
-    if ($this->isCsrfTokenValid('delete'.$song->getId(), $request->request->get('_token'))) {
-        // First remove all playlist associations
-        foreach ($song->getPlaylistSongs() as $playlistSong) {
-            $em->remove($playlistSong);
+    public function deleteSong(Song $song, Request $request, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$song->getId(), $request->request->get('_token'))) {
+            $em->remove($song);
+            $em->flush();
+            $this->addFlash('success', 'Chanson supprimée');
         }
-        
-        // Then remove the song itself
-        $em->remove($song);
-        $em->flush();
-        $this->addFlash('success', 'Chanson supprimée');
+        return $this->redirectToRoute('admin_song_index');
     }
-    return $this->redirectToRoute('admin_song_index');
-}
 
     // Gestion des utilisateurs
     #[Route('/users', name: 'admin_user_index')]

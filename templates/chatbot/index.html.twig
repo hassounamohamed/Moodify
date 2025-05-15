@@ -1,97 +1,223 @@
-{# templates/chatbot/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Chatbot Moodify{% endblock %}
+{% block title %}Chatbot Musical{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .chat-container {
-            max-height: 500px;
+        #chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        #chat-header {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        #chat-messages {
+            height: 500px;
             overflow-y: auto;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9fa;
         }
-        .message-bubble {
+        
+        .message {
+            margin-bottom: 15px;
             max-width: 80%;
-            padding: 10px 15px;
-            margin-bottom: 10px;
-            position: relative;
+            padding: 12px 16px;
+            border-radius: 18px;
+            animation: fadeIn 0.3s;
+            line-height: 1.5;
         }
+        
         .user-message {
-            background-color: #e3f2fd;
-            border-radius: 15px 15px 0 15px;
+            background: #6c5ce7;
+            color: white;
             margin-left: auto;
+            border-bottom-right-radius: 5px;
         }
+        
         .bot-message {
-            background-color: #f5f5f5;
-            border-radius: 15px 15px 15px 0;
+            background: #e9ecef;
             margin-right: auto;
+            border-bottom-left-radius: 5px;
         }
-        .message-time {
-            font-size: 0.8rem;
-            color: #6c757d;
+        
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #e9ecef;
+            border-radius: 18px;
+            margin-bottom: 15px;
         }
-        .mood-indicator {
-            width: 12px;
-            height: 12px;
+        
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            margin: 0 2px;
+            background: #6c5ce7;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 5px;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        #chat-input-container {
+            padding: 15px;
+            background: white;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        #chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        #chat-input:focus {
+            border-color: #6c5ce7;
+        }
+        
+        #send-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        #send-btn:hover {
+            background: #5649d1;
+            transform: scale(1.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
         }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="container my-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">
-                        <i class="fas fa-robot me-2"></i>Chatbot Moodify
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <div class="chat-container">
-                        {% for conv in conversations %}
-                            <div class="d-flex flex-column">
-                                <div class="message-bubble user-message">
-                                    <small class="message-time d-block text-end">
-                                        Vous, {{ conv.createdAt|date('H:i') }}
-                                    </small>
-                                    <p class="mb-0">{{ conv.message }}</p>
-                                </div>
-                                
-                                <div class="message-bubble bot-message">
-                                    <small class="message-time">
-                                        <span class="mood-indicator mood-{{ conv.mood }}"></span>
-                                        Moodify Bot, {{ conv.createdAt|date('H:i') }}
-                                    </small>
-                                    <p class="mb-0">{{ conv.response }}</p>
-                                </div>
-                            </div>
-                        {% else %}
-                            <p class="text-center text-muted py-4">
-                                <i class="fas fa-comment-dots fa-2x mb-2"></i><br>
-                                Commencez la conversation avec notre chatbot
-                            </p>
-                        {% endfor %}
-                    </div>
-                    
-                    {{ form_start(form) }}
-                        {{ form_row(form.message) }}
-                        <div class="d-grid mt-3">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-paper-plane me-2"></i>Envoyer
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
-            </div>
+<div id="chat-container">
+    <div id="chat-header">
+        <h2><i class="fas fa-robot"></i> Assistant Musical Moodify</h2>
+    </div>
+    
+    <div id="chat-messages">
+        <div class="bot-message message">
+            Bonjour ! Dites-moi comment vous vous sentez et je vous recommanderai une playlist adaptée.
         </div>
     </div>
+    
+    <div id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Écrivez votre message..." autocomplete="off">
+        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('send-btn');
+            const chatMessages = document.getElementById('chat-messages');
+            
+            function addMessage(text, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function showTyping() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.innerHTML = `
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return typingDiv;
+            }
+            
+            async function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+                
+                addMessage(message, true);
+                chatInput.value = '';
+                const typing = showTyping();
+                
+                try {
+                    const response = await fetch('{{ path('api_chatbot') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ 
+                            message: message
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    typing.remove();
+                    
+                    if (data.error) {
+                        console.error("Erreur API:", data.error);
+                        addMessage(`${data.response}`, false);
+                    } else {
+                        addMessage(data.response, false);
+                    }
+                } catch (error) {
+                    typing.remove();
+                    console.error("Erreur technique:", error);
+                    addMessage("Désolé, le service est temporairement indisponible. Veuillez réessayer plus tard.", false);
+                }
+            }
+            
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+    </script>
 {% endblock %}
